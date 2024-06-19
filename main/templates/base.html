@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{ ln }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Blog {% endblock %}</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/entete.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/blog.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/question.css' %}">
+    </head>
+    <body>
+        {% include 'entete.html' %}
+        
+        {% block content %}
+        {% endblock %}
+        
+        <script src="{% static 'js/getLanguage.js' %}"></script>
+        <script src="{% static 'js/searchArticle.js' %}"></script>
+    </body>
+</html>

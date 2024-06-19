@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Blog{% endblock %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <h2>{{ label }}</h2>
+    <div class="list_article">
+        <div>
+            <form>
+                <input type="text" placeholder="Recherche d'un article..." id="searchBar">
+            </form>
+        </div>
+        <ul id="articleList">
+    {% for article in articles %}
+        <li class="article"><a href="article/{{ article.title }}"><h3>{{ article.title }}</h3></a></li>
+    {% endfor %}
+    </ul>
+    </div>
+{% endblock %}

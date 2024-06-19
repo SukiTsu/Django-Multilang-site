@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block entete %}{% endblock %}</title>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="/fr">Home</a></li>
+                    <li><a href="/blog/fr">Articles</a></li>
+                    <li><a href="/question">Une Question ?</a></li>
+                    <li>
+                        <select name="langue" id="select">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                        </select>
+                    </li>
+                </ul>
+            </nav>
+        </header>
