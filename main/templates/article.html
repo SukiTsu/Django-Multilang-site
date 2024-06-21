@@ -1,13 +1,9 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-<html>
-    <body>
-        {% block content %}
-        
-        <h1>{{ article.title }}</h1>
-        <h2>{{ article.publication_date }}</h2>
-        <p>{{ article.content }}</p>
-        <p>{{ message }}</p>
-        {% endblock %}
-    </body>
-</html>
+{% block title %}Article{% endblock %}
+
+{% block content %}
+    <h1>{{ article.title }}</h1>
+    <h2>{{ article.publication_date }}</h2>
+    <p>{{ article.content }}</p>
+    <p>{{ message }}</p>
+{% endblock %}

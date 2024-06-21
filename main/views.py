@@ -7,7 +7,28 @@ from django.db.models import Q
 import openai
 
 openai.api_key = ''
+LANGUE = ['fr','en']
 
+def error404(request):
+    file_path = 'main/data_txt/error/content_en.csv'
+    data = readCSV(file_path,';')
+    return render(request, '404.html', data)
+
+
+def check_request(request,ln,file_path):
+    data = {}
+    
+    # Le navigateur envoi une requête de 'favicon.io' après le chargement
+    if ln == 'favicon.ico' :
+        pass
+    elif ln in LANGUE:
+        print("test")
+        data=readCSV(file_path,';')
+        
+        data['ln'] = ln
+    else:
+        data = 'error'
+    return data
 
 def home(request, ln='fr'):
     """_summary_
@@ -19,9 +40,11 @@ def home(request, ln='fr'):
     Returns:
         _type_: _description_ Page Web home.html 
     """
+    print('test de ln:', ln)
     file_path = 'main/data_txt/home/home_'+ln+".csv"
-    data=readCSV(file_path,';')
-    data['ln'] = ln
+    data = check_request(request,ln,file_path)
+    if data == 'error':
+        return error404(request)
     return render(request, 'home.html', data)
 
 
@@ -108,8 +131,9 @@ def blog(request, ln='fr'):
     #Lecture du fichier csv et ajoute les clefs/valeurs dans un dictionnaire
     #Ses clefs permettrons d'afficher les textes correspondants dans la page html
     file_path = 'main/data_txt/blog/blog_'+ln+'.csv'
-    data = readCSV(file_path)
-    data['ln'] = ln
+    data = check_request(request,ln,file_path)
+    if data == 'error':
+        return error404(request)
     #############################################
     #   Insertion des articles dans la bd       #
     #############################################
