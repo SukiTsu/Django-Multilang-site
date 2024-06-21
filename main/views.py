@@ -15,7 +15,18 @@ def error404(request):
     return render(request, '404.html', data)
 
 
-def check_request(request,ln,file_path):
+def check_request(ln,file_path):
+    """_summary_
+        Permet de vérifier si la langue séléctionné existe.
+        Si la langue sélectionné existe, envoie les données à chargé de la page grâce à la méthode readCSV()
+        Sinon return 'error' qui permettra d'afficher une page d'erreur.
+    Args:
+        ln (_type_): _description_
+        file_path (_type_): _description_
+
+    Returns:
+        _type_: _description_ Dictionaire avec le contenu de la page (voir readCSV pour plus de détails) si la langue sélectionné existe, sinon un str 'error'
+    """
     data = {}
     
     # Le navigateur envoi une requête de 'favicon.io' après le chargement
@@ -42,7 +53,7 @@ def home(request, ln='fr'):
     """
     print('test de ln:', ln)
     file_path = 'main/data_txt/home/home_'+ln+".csv"
-    data = check_request(request,ln,file_path)
+    data = check_request(ln,file_path)
     if data == 'error':
         return error404(request)
     return render(request, 'home.html', data)
@@ -131,7 +142,7 @@ def blog(request, ln='fr'):
     #Lecture du fichier csv et ajoute les clefs/valeurs dans un dictionnaire
     #Ses clefs permettrons d'afficher les textes correspondants dans la page html
     file_path = 'main/data_txt/blog/blog_'+ln+'.csv'
-    data = check_request(request,ln,file_path)
+    data = check_request(ln,file_path)
     if data == 'error':
         return error404(request)
     #############################################
