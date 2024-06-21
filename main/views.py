@@ -128,14 +128,16 @@ def article(request,ln,inTitle):
     Returns:
         _type_: _description_ Page Web article.html
     """
+    file_path_base = 'main/data_txt/base/entete_'+ln+'.csv'
+    data=readCSV(file_path_base)
     try:
         article = Article.objects.get(title=inTitle)
-        file_path_base = 'main/data_txt/base/entete_'+ln+'.csv'
-        data=readCSV(file_path_base,)
+        
         data['article'] = article
         data['ln'] = ln
     except:
-        data = {'message': 'Erreur: article introuvable'}
+        file_path = "main/data_txt/error/data_"+ln+".csv"
+        data = readCSV(file_path,data)
     return render(request, 'article.html', data)
 
 
