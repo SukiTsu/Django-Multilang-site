@@ -60,7 +60,6 @@ def home(request, ln='fr'):
     Returns:
         _type_: _description_ Page Web home.html 
     """
-    print('test de ln:', ln)
     file_path = 'main/data_txt/home/home_'+ln+'.csv'
     data = check_request(ln,file_path)
     if data == 'error':

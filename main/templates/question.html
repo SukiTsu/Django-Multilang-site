@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Question{% endblock %}
-    {% block content %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/question.css' %}">
     <h1>{{ title_question }}</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit">
     </form>
-    {% endblock %}
+{% endblock %}

@@ -1,19 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Blog{% endblock %}
 
 {% block content %}
+<script src="{% static 'js/afficheContentArticle.js' %}"></script>
     <h1>{{ title_blog }}</h1>
     <h2>{{ label_blog }}</h2>
-    <div class="list_article">
-        
-        <form>
-            <input type="text" placeholder="Recherche d'un article..." id="searchBar">
-        </form>
-        <ul id="articleList">
-    {% for article in articles %}
-        <li class="article"><a href="article/{{ article.title }}"><h3>{{ article.title }}</h3></a></li>
-    {% endfor %}
-    </ul>
+    
+    <div class="form__group field">
+        <input type="text" id="searchBar" class="form__field" placeholder="{{ placeholder }}">
     </div>
+
+    <div class="article-container" id="articleList">
+        {% for article in articles %}
+            <div class="article">
+                <div class="title" onclick="toggleContent(this)">
+                    <span class="arrow">▶</span>
+                    <span><a href="article/{{ article.title }}">{{ article.title }}</a></span>
+                </div>
+                <div class="content">
+                    {{ article.content }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <script src="{% static 'js/searchArticle.js' %}"></script>
 {% endblock %}
