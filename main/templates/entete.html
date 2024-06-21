@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>{% block entete %}{% endblock %}</title>
-    </head>
-    <body>
-        <header>
-            <nav class="navbar">
-                <ul>
-                    <li><a href="/fr">Home</a></li>
-                    <li><a href="/blog/fr">Articles</a></li>
-                    <li><a href="/question">Une Question ?</a></li>
-                    <li>
-                        <select name="langue" id="select">
-                            <option value="fr">Français</option>
-                            <option value="en">English</option>
-                        </select>
-                    </li>
-                </ul>
-            </nav>
-        </header>
+<head>
+    <title>{% block entete %}{% endblock %}</title>
+</head>
+<header>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/{{ ln }}">{{ element1 }}</a></li>
+            <li><a href="/blog/{{ ln }}">{{ element2 }}</a></li>
+            <li><a href="/question/{{ ln }}">{{ element3 }}</a></li>
+            <li>
+                <select name="langue" id="select">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
+            </li>
+        </ul>
+    </nav>
+</header>

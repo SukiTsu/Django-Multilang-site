@@ -40,35 +40,25 @@ class TestCheckRequest(unittest.TestCase):
 
 class ReadCSVTestCase(unittest.TestCase):
 
-    def test_fichier_valide_delimiteur_par_defaut(self):
+    def test_fichier_valide(self):
         file_path = FILE_PATH+'blog/blog_fr.csv'
         result = readCSV(file_path)
         self.assertIsInstance(result, dict)
-        self.assertIn('title', result)
-        self.assertIn('label', result)
-        self.assertEqual(result['title'], 'Bienvenu sur notre blog')
-        self.assertEqual(result['label'], 'Voici la liste des articles:')
-
-    def test_fichier_valide_delimiteur_personnalise(self):
-        file_path = FILE_PATH+'article/en/article1.csv'
-        delimiter = ';'
-        result = readCSV(file_path, delimiter)
-        self.assertIsInstance(result, dict)
-        self.assertIn('title', result)
-        self.assertIn('publication_date', result)
-        self.assertEqual(result['title'], 'A digital world (en)')
-        self.assertEqual(result['publication_date'], '28/05/2015')
+        self.assertIn('title_blog', result)
+        self.assertIn('label_blog', result)
+        self.assertEqual(result['title_blog'], 'Bienvenu sur notre blog')
+        self.assertEqual(result['label_blog'], 'Voici la liste des articles:')
 
     def test_fichier_inexistant(self):
-        file_path = FILE_PATH+'blog/blog_ln.csv'
-        result = readCSV(file_path)
+        file_path = FILE_PATH+'blog/blog_lllnn.csv'
+        result = readCSV(file_path,{})
         self.assertEqual(result, {})
 
     def test_erreur_format_csv(self):
         file_path = FILE_PATH+'article/en/article1.csv'
-        result = readCSV(file_path)
+        result = readCSV(file_path,{})
         self.assertIsInstance(result, dict)
-        self.assertNotEqual(len(result), 0)  # Assurez-vous que le dictionnaire contient des données valides
+        self.assertNotEqual(len(result), 0)
 
 if __name__ == '__main__':
     unittest.main()

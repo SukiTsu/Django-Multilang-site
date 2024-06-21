@@ -10,8 +10,16 @@ openai.api_key = ''
 LANGUE = ['fr','en']
 
 def error404(request):
+    """_summary_
+        Affiche la page d'erreur lorsque l'utilisateur essaye charger la page avec une langue qui n'est pas spécifier dans notre application
+    Args:
+        request (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     file_path = 'main/data_txt/error/content_en.csv'
-    data = readCSV(file_path,';')
+    data = readCSV(file_path)
     return render(request, '404.html', data)
 
 
@@ -21,8 +29,8 @@ def check_request(ln,file_path):
         Si la langue sélectionné existe, envoie les données à chargé de la page grâce à la méthode readCSV()
         Sinon return 'error' qui permettra d'afficher une page d'erreur.
     Args:
-        ln (_type_): _description_
-        file_path (_type_): _description_
+        ln (_type_): _description_ Choix de la langue pour la génération de la page
+        file_path (_type_): _description_ Chemin du fichier csv à lire
 
     Returns:
         _type_: _description_ Dictionaire avec le contenu de la page (voir readCSV pour plus de détails) si la langue sélectionné existe, sinon un str 'error'
@@ -33,13 +41,14 @@ def check_request(ln,file_path):
     if ln == 'favicon.ico' :
         pass
     elif ln in LANGUE:
-        print("test")
-        data=readCSV(file_path,';')
-        
+        data=readCSV(file_path)
+        file_path_base = 'main/data_txt/base/entete_'+ln+'.csv'
+        data=readCSV(file_path_base,data)
         data['ln'] = ln
     else:
         data = 'error'
     return data
+
 
 def home(request, ln='fr'):
     """_summary_
@@ -52,7 +61,7 @@ def home(request, ln='fr'):
         _type_: _description_ Page Web home.html 
     """
     print('test de ln:', ln)
-    file_path = 'main/data_txt/home/home_'+ln+".csv"
+    file_path = 'main/data_txt/home/home_'+ln+'.csv'
     data = check_request(ln,file_path)
     if data == 'error':
         return error404(request)
@@ -81,18 +90,21 @@ def ask_openai(message):
     return answer
 
 
-def question(request):
+def question(request,ln):
     """_summary_
         En cours développement
         Permet l'envoi d'une question à un chatbot
     Args:
         request (_type_): _description_
+        ln (_type_): _description_ Langue souhaité pour la génération de la page
 
     Returns:
         _type_: _description_ Page web question.html avec la réponse du chatbot
     """
-    
-    data = {'form':  MessageForm()}
+    print("test")
+    file_path = 'main/data_txt/question/question_'+ln+".csv"
+    data = check_request(ln,file_path)
+    data['form'] = MessageForm()
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
@@ -118,7 +130,9 @@ def article(request,ln,inTitle):
     """
     try:
         article = Article.objects.get(title=inTitle)
-        data = {'article': article}
+        file_path_base = 'main/data_txt/base/entete_'+ln+'.csv'
+        data=readCSV(file_path_base,)
+        data['article'] = article
         data['ln'] = ln
     except:
         data = {'message': 'Erreur: article introuvable'}
@@ -136,30 +150,24 @@ def blog(request, ln='fr'):
         _type_: _description_  Une page Web en lui envoyant le contenu traduit ainsi que les articles à afficher
     """
 
-    #############################################
-    #            Affichage des labels           #
-    #############################################
     #Lecture du fichier csv et ajoute les clefs/valeurs dans un dictionnaire
     #Ses clefs permettrons d'afficher les textes correspondants dans la page html
     file_path = 'main/data_txt/blog/blog_'+ln+'.csv'
     data = check_request(ln,file_path)
     if data == 'error':
         return error404(request)
-    #############################################
-    #   Insertion des articles dans la bd       #
-    #############################################
-
+   
     # Parcour les fichiers qui se trouvent dans le répertoire de la langue sélectionné
     files_path_article = 'main/data_txt/article/'+ln
     path = Path(files_path_article)
     for file in path.rglob('*'):
         if file.is_file():
             # Récupère les données du/des csv en les stockant dans un dictionnaire
-            data_article = readCSV(file, ';')
+            data_article = readCSV(file)
             
             # Si l'article ne se trouve pas dans la base de donnés, une insertion s'effectue
-            if len(Article.objects.filter(title=data_article['title']))==0:
-                nouvel_article = Article.objects.create(title=data_article['title'], content=data_article['content'], publication_date=data_article['publication_date'])
+            if len(Article.objects.filter(title=data_article['title_article']))==0:
+                nouvel_article = Article.objects.create(title=data_article['title_article'], content=data_article['content_article'], publication_date=data_article['publication_date'])
                 nouvel_article.save()
     
 
@@ -169,21 +177,21 @@ def blog(request, ln='fr'):
 
     return render(request, 'templates/blog.html', data)
 
-def readCSV(file_path, delemit=','):
+def readCSV(file_path,data={}):
     """_summary_
         Lit et insère dans un dictionnaire les données du csv
-        ! Ses fichiers doivents correspondrent au partern: une ligne -> clef:valeur
+        ! Ses fichiers doivents correspondrent au partern: une ligne -> clef:valeur et doivent être séparés par un ; 
     Args:
-        file_path (_type_): _description_ chemin où se situe le csv
-        delemit (str, optional): _description_. Defaults to ','. Délimiteur entre les clefs et valeurs
+        file_path (_type_): _description_ Chemin où se situe le csv
+        data (dict, optional): _description_. Defaults to {}. Pour ajouter des clefs et valeurs dans un dictionnaire déja existant
 
     Returns:
         _type_: _description_ Dictionnaire avec toutes les clefs et valeurs du csv, permettant à être utilisé pour les pages web
     """
-    data = {}
+
     try:
         with open(file_path, mode='r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file, delimiter=delemit)
+            reader = csv.reader(file,delimiter=";")
             
             for row in reader:
                 key, value = row[0].strip(), row[1].strip()
