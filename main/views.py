@@ -1,13 +1,14 @@
 from django.shortcuts import render
 import csv
 from pathlib import Path
-from .models import Article, MessageForm
+from .models import Article, QuestionResponse
 from django.db.models import Q
 
 import openai
 
 openai.api_key = ''
 LANGUE = ['fr','en']
+FILE_BASE = 'main/data_txt'
 
 def error404(request):
     """_summary_
@@ -100,29 +101,41 @@ def question(request,ln):
     Returns:
         _type_: _description_ Page web question.html avec la réponse du chatbot
     """
-    print("test")
-    file_path = 'main/data_txt/question/question_'+ln+".csv"
+    file_path = 'main/data_txt/question/page/question_'+ln+".csv"
     data = check_request(ln,file_path)
-    data['form'] = MessageForm()
+
+    file_path_question_response = FILE_BASE+'/question/question_response/'+ln
+    path = Path(file_path_question_response)
+    for file in path.rglob('*'):
+        if file.is_file():
+            data_question_response = readCSV(file)
+            # Si l'article ne se trouve pas dans la base de donnés, une insertion s'effectue
+            if len(QuestionResponse.objects.filter(question=data_question_response['question_user']))==0:
+                nouvel_question_response = QuestionResponse.objects.create(question=data_question_response['question_user'], response=data_question_response['response_bot'],lang=ln)
+                nouvel_question_response.save()
+
+    data['questions'] = QuestionResponse.objects.filter(lang=ln)
+    print(data['questions'])
+    '''data['form'] = MessageForm()
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data['text']
             response = ask_openai(question)
             print(response)
-            
+    '''       
 
     return render(request, 'question.html', data)
 
 
-def article(request,ln,inTitle):
+def article(request,ln,inId):
     """_summary_
         Page de l'article sélectionné depuis la page blog
         Il sera traduit en la langue choisi
     Args:
         request (_type_): _description_
         ln (_type_): _description_ choix de la langue
-        inTitle (_type_): _description_ Titre de l'article choisi
+        inTitle (_type_): _description_ Id de l'article choisi
 
     Returns:
         _type_: _description_ Page Web article.html
@@ -130,7 +143,7 @@ def article(request,ln,inTitle):
     file_path_base = 'main/data_txt/base/entete_'+ln+'.csv'
     data=readCSV(file_path_base)
     try:
-        article = Article.objects.get(title=inTitle)
+        article = Article.objects.get(id=inId)
         
         data['article'] = article
         data['ln'] = ln

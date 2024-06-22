@@ -6,9 +6,24 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/question.css' %}">
     <h1>{{ title_question }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit">
-    </form>
+    <h2>{{ content_question }}</h2>
+    
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox">
+            
+        </div>
+        <div class="question-box">
+            {% for question in questions %}
+                <button onclick="askQuestion('{{ question.id }}')">{{ question.question }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="responses" style="display: none;">
+        {% for question in questions %}
+            <div id="response-{{ question.id }}">{{ question.response }}</div>
+        {% endfor %}
+    </div>
+
+<script src="{% static 'js/chatResponse.js' %}"></script>
 {% endblock %}
